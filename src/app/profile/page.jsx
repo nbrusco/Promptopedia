@@ -1,60 +1,60 @@
-"use client";
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+'use client'
+import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
-import Profile from "@/components/Profile";
+import Profile from '@/components/Profile'
 
 const MyProfile = () => {
-  const router = useRouter();
-  const { data: session } = useSession();
+  const router = useRouter()
+  const { data: session } = useSession()
 
-  const [myPrompts, setMyPrompts] = useState([]);
+  const [myPrompts, setMyPrompts] = useState([])
 
   useEffect(() => {
     const fetchPrompts = async () => {
-      const response = await fetch(`/api/users/${session?.user.id}/prompts`);
-      const data = await response.json();
+      const response = await fetch(`/api/users/${session?.user.id}/prompts`)
+      const data = await response.json()
 
-      setMyPrompts(data);
-    };
+      setMyPrompts(data)
+    }
 
-    if (session?.user.id) fetchPrompts();
-  }, [session?.user.id]);
+    if (session?.user.id) fetchPrompts()
+  }, [session?.user.id])
 
   const handleEdit = (prompt) => {
-    router.push(`/update-prompt?id=${prompt._id}`);
-  };
+    router.push(`/update-prompt?id=${prompt._id}`)
+  }
 
   const handleDelete = async (prompt) => {
     const hasConfirmed = confirm(
-      "Are you sure you want to delete this prompt?"
-    );
+      'Are you sure you want to delete this prompt?'
+    )
     if (hasConfirmed) {
       try {
         await fetch(`/api/prompt/${prompt._id.toString()}`, {
-          method: "DELETE",
-        });
+          method: 'DELETE'
+        })
 
         const filteredPosts = myPrompts.filter(
           (prom) => prom._id !== prompt._id
-        );
-        setMyPrompts(filteredPosts);
+        )
+        setMyPrompts(filteredPosts)
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     }
-  };
+  }
 
   return (
     <Profile
-      name="My"
-      description="Welcome to your personalized profile page"
+      name='My'
+      description='Welcome to your personalized profile page'
       data={myPrompts}
       handleEdit={handleEdit}
       handleDelete={handleDelete}
     />
-  );
-};
+  )
+}
 
-export default MyProfile;
+export default MyProfile
